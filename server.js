@@ -1,22 +1,20 @@
+'use strict';
 
-var path = require('path');
-var express = require('express');
-var bodyParser = require('body-parser');
-var app = express();
+var config = require('./config/config'),
+	mongoose = require('mongoose');
 
-app.use('/', express.static(path.join(__dirname, 'public')));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
+var db = mongoose.connect(config.db);
 
-app.get('/leaderboard', function(req, res) {
-  res.setHeader('Content-Type', 'application/json');
-  res.send([
-    {name: 'Lukas', points: 900},
-    {name: 'John', points: 1000},
-    {name: 'Mike', points: 200}
-  ]);
-});
+var app = require('./config/express')(db);
 
-app.listen(3000);
+// Bootstrap passport config
+require('./config/passport')();
 
-console.log('Server started: http://localhost:3000/');
+// Start the app by listening on <port>
+app.listen(config.port);
+
+// Expose app
+exports = module.exports = app;
+
+// Logging initialization
+console.log('Application started on port ' + config.port);
