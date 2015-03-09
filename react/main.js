@@ -4,14 +4,17 @@ var React = require('react');
 var Router = require('react-router');
 
 var App = require('./app');
+var Leaderboard = require('./leaderboard');
 
 var Route = Router.Route;
 
+/*
+<Route name="game" path="game/:level" handler={Game}/>
+<Route name="about" handler={About}/>
+*/
 var routes = (
   <Route handler={App}>
-    /*<Route name="game" path="game/:level" handler={Game}/>*/
     <Route name="leaderboard" handler={Leaderboard}/>
-    //<Route name="about" handler={About}/>
   </Route>
 );
 

@@ -8,6 +8,9 @@ var express = require('express'),
 	helmet = require('helmet'),
 	passport = require('passport'),
 	mongoStore = require('connect-mongo')(session),
+	http = require('http'),
+	io = require('socket.io'),
+	passportSocketIo = require('passport.socketio'),
 	config = require('./config');
 
 module.exports = function(db) {
@@ -33,13 +36,14 @@ module.exports = function(db) {
 	app.use(cookieParser());
 
 	// Express MongoDB session storage
+	var sessionStore = new mongoStore({
+		mongooseConnection: db.connection,
+		collection: 'sessions',
+		autoReconnect: true
+	});
 	app.use(session({
 		secret: config.sessionSecret,
-		store: new mongoStore({
-			mongooseConnection: db.connection,
-			collection: 'sessions',
-			autoReconnect: true
-		}),
+		store: sessionStore,
 		resave: true,
     	saveUninitialized: true
 	}));
@@ -51,13 +55,14 @@ module.exports = function(db) {
 	// Use helmet to secure Express headers
 	app.use(helmet());
 
+	// Remove Express from HTTP headers
 	app.disable('x-powered-by');
 
 
 	// Setting the app router and static folder
 	app.use(express.static(__dirname + '/../public'));
 
-	require('../app/routes.js')(app);
+	require('../app/routes')(app);
 
 
 	// Assume 'not found' in the error msgs is a 404. this is somewhat silly, but valid, you can do whatever you like, set properties, use instanceof etc.
@@ -79,6 +84,27 @@ module.exports = function(db) {
 			error: '404'
 		});
 	});
+
+	// Init socket.io
+	app.server = http.createServer(app);
+	io = io.listen(app.server);
+
+	io.use(passportSocketIo.authorize({
+		cookieParser: cookieParser,
+		secret: config.sessionSecret,
+		store: sessionStore,        
+		success: function(data, accept) {
+			console.log('successful connection to socket.io');
+			accept();
+		},
+		fail: function(data, message, error, accept) { 
+			if(error) accept(new Error(message));
+			console.log('failed connection to socket.io:', message);
+			accept(null, false);  
+		}
+	}));
+
+	require('../app/sockets')(io);
 
 	return app;
 };

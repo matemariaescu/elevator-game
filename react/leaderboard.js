@@ -1,6 +1,11 @@
 /*** @jsx React.DOM */
 
 var React = require('react');
+var socket = require('socket.io-client')('http://localhost:3333');
+
+socket.on('connect', function() {
+  console.log('connected!!!');
+});
 
 var SetIntervalMixin = {
   componentWillMount: function() {
@@ -17,7 +22,7 @@ var SetIntervalMixin = {
 var Leaderboard = React.createClass({
   mixins: [SetIntervalMixin],
   loadLeaderboardFromServer: function() {
-    $.ajax({
+    /*$.ajax({
       url: 'leaderboard',
       dataType: 'json',
       success: function(data) {
@@ -26,9 +31,14 @@ var Leaderboard = React.createClass({
       error: function(xhr, status, err) {
         console.error(this.props.url, status, err.toString());
       }.bind(this)
-    });
+    });*/
   },
   getInitialState: function() {
+    socket.on('leaderboard', function(data) {
+      console.log('got new data');
+      this.setState({data: data});
+    }.bind(this));
+
     return {
       data: []
     };
@@ -39,7 +49,7 @@ var Leaderboard = React.createClass({
   },
   render: function() {
     var rows = this.state.data.sort(function(l, r) {
-      return l.points < r.points;
+      return l.points < r.points ? 1 : -1;
     }).map(function(person) {
       return (
         <tr>
@@ -59,4 +69,4 @@ var Leaderboard = React.createClass({
   }
 });
 
-exports = Leaderboard;
+module.exports = Leaderboard;
