@@ -55,7 +55,7 @@ module.exports = function(db) {
 
 
 	// Setting the app router and static folder
-	app.use(express.static(__dirname + '/public'));
+	app.use(express.static(__dirname + '/../public'));
 
 	require('../app/routes.js')(app);
 

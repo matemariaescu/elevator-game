@@ -1,52 +1,6 @@
-var Router = ReactRounter
-var { Route, RouteHandler, Link } = Router;
+/*** @jsx React.DOM */
 
-var App = React.createClass({
-  render: function () {
-    return (
-      <div>
-        <h1>Elevator Game</h1>
-        <ul>
-          <li><Link to="game" params={{level: "1"}}>Play!</Link></li>
-          <li><Link to="about">About</Link></li>
-          <li><Link to="leaderboard">Leaderboard</Link></li>
-        </ul>
-        <RouteHandler/>
-      </div>
-    );
-  }
-});
-
-var About = React.createClass({
-  render: function () {
-    return (
-      <div>
-        <h3>About</h3>
-      </div>
-    );
-  }
-});
-
-var Game = React.createClass({
-  mixins: [ Router.State ],
-
-  getInitialState: function() {
-    return {
-      data: []
-    };
-  },
-
-  render: function() {
-    var level = this.getParams().level;
-
-    return (
-      <div>
-        <h3>Game</h3>
-        You're in level {level}
-      </div>
-    );
-  }
-});
+var React = require('react');
 
 var SetIntervalMixin = {
   componentWillMount: function() {
@@ -105,14 +59,4 @@ var Leaderboard = React.createClass({
   }
 });
 
-var routes = (
-  <Route handler={App}>
-    <Route name="game" path="game/:level" handler={Game}/>
-    <Route name="leaderboard" handler={Leaderboard}/>
-    <Route name="about" handler={About}/>
-  </Route>
-);
-
-Router.run(routes, function (Handler) {
-  React.render(<Handler/>, document.getElementById('content'));
-});
+exports = Leaderboard;
