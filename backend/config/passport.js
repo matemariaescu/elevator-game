@@ -30,12 +30,12 @@ module.exports = function() {
 				}
 				if (!user) {
 					return done(null, false, {
-						message: 'Unknown user'
+						error: 'Unknown user'
 					});
 				}
 				if (!user.authenticate(password)) {
 					return done(null, false, {
-						message: 'Invalid password'
+						error: 'Invalid password'
 					});
 				}
 

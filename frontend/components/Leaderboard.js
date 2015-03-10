@@ -1,11 +1,11 @@
 /*** @jsx React.DOM */
 
 var React = require('react');
-var socket = require('socket.io-client')('http://localhost:3333');
+/*var socket = require('socket.io-client')('http://localhost:3333');
 
 socket.on('connect', function() {
   console.log('connected!!!');
-});
+});*/
 
 var SetIntervalMixin = {
   componentWillMount: function() {
@@ -34,18 +34,17 @@ var Leaderboard = React.createClass({
     });*/
   },
   getInitialState: function() {
-    socket.on('leaderboard', function(data) {
+    /*socket.on('leaderboard', function(data) {
       console.log('got new data');
       this.setState({data: data});
-    }.bind(this));
+    }.bind(this));*/
 
     return {
       data: []
     };
   },
   componentDidMount: function() {
-    this.loadLeaderboardFromServer();
-    this.setInterval(this.loadLeaderboardFromServer, 2000);
+
   },
   render: function() {
     var rows = this.state.data.sort(function(l, r) {

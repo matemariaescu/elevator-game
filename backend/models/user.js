@@ -9,13 +9,6 @@ var mongoose = require('mongoose'),
 
 
 var UserSchema = new Schema({
-	/*email: {
-		type: String,
-		trim: true,
-		unique: true,
-		default: '',
-		match: [/.+\@.+\..+/, 'email adress not valid']
-	},*/
 	username: {
 		type: String,
 		unique: true,

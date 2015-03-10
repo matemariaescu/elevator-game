@@ -14,6 +14,7 @@ var App = React.createClass({
         <h1>Elevator Game</h1>
         <ul>
           <li><Link to="leaderboard">Leaderboard</Link></li>
+          <li><Link to="game" params={{level: "0"}}>Game</Link></li>
         </ul>
         <Router.RouteHandler/>
       </div>

@@ -1,13 +1,12 @@
 module.exports = {
   cache: true,
-  entry: './react/main.js',
+  entry: './frontend/app.js',
   output: {
-    filename: './public/browser-bundle.js'
+    filename: './frontend/public/js/bundle.js'
   },
   module: {
     loaders: [
-      {test: /\.js$/, loader: 'jsx-loader'},
-      {test: /\.css$/, loader: 'style-loader!css-loader'}
+      {test: /\.js$/, loader: 'jsx-loader'}
     ]
   }
 };

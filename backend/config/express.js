@@ -18,8 +18,8 @@ module.exports = function(db) {
 	var app = express();
 
 	// Require models
-	fs.readdirSync('./app/models').forEach(function(file) {
-	  require('../app/models/' + file);
+	fs.readdirSync(__dirname + '/../models').forEach(function(file) {
+	  require(__dirname + '/../models/' + file);
 	});
 
 	// Showing stack errors
@@ -60,9 +60,9 @@ module.exports = function(db) {
 
 
 	// Setting the app router and static folder
-	app.use(express.static(__dirname + '/../public'));
+	app.use(express.static(__dirname + '/../../frontend/public'));
 
-	require('../app/routes')(app);
+	require('../routes')(app);
 
 
 	// Assume 'not found' in the error msgs is a 404. this is somewhat silly, but valid, you can do whatever you like, set properties, use instanceof etc.
@@ -104,7 +104,7 @@ module.exports = function(db) {
 		}
 	}));
 
-	require('../app/sockets')(io);
+	require('../sockets')(io);
 
 	return app;
 };

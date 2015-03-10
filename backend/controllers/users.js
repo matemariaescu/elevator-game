@@ -17,7 +17,7 @@ exports.signup = function(req, res) {
 
 	user.save(function(err) {
 		if (err) {
-			return res.send(400, {
+			return res.status(400).jsonp({
 				message: err
 			});
 		} else {
@@ -25,7 +25,7 @@ exports.signup = function(req, res) {
 
 			req.login(user, function(err) {
 				if (err) {
-					res.send(400, err);
+					res.status(400).jsonp(err);
 				} else {
 					res.status(200).jsonp(user);
 				}
@@ -37,13 +37,13 @@ exports.signup = function(req, res) {
 exports.signin = function(req, res, next) {
 	passport.authenticate('local', function(err, user, info) {
 		if (err || !user) {
-			res.send(400, info);
+			res.status(400).jsonp(info);
 		} else {
 			user = removeSensitiveUserData(user);
 
 			req.login(user, function(err) {
 				if (err) {
-					res.send(400, err);
+					res.status(400).jsonp(err);
 				} else {
 					res.status(200).jsonp(user);
 				}
@@ -66,8 +66,8 @@ exports.me = function(req, res) {
 
 exports.requiresLogin = function(req, res, next) {
 	if (!req.isAuthenticated()) {
-		return res.send(401, {
-			message: 'not logged in'
+		return res.status(400).jsonp({
+			error: 'not logged in'
 		});
 	}
 
