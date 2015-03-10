@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-	db: 'mongodb://localhost/elevator',
+	db: process.env.MONGOLAB_URI || 'mongodb://localhost/elevator',
 	sessionSecret: 'blablabla',
-	port: 3333
+	port: process.env.PORT || 3333
 }
