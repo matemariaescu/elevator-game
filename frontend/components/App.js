@@ -11,7 +11,7 @@ var App = React.createClass({
     // <li><Link to="about">About</Link></li>
     return (
       <div>
-        <h1>Elevator Game</h1>
+        <h1>ElevatorOperator</h1>
         <ul>
           <li><Link to="leaderboard">Leaderboard</Link></li>
           <li><Link to="game" params={{level: "0"}}>Game</Link></li>
