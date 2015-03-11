@@ -28,7 +28,9 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "webpack --progress --profile --colors && node ./backend/app.js"
+    "start": "webpack --progress --profile --colors && node ./backend/app.js",
+    "watch": "webpack --progress --profile --colors --watch",
+    "serve": "node ./backend/app.js"
   },
   "author": "Lukas Köbis"
 }

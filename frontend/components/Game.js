@@ -2,11 +2,25 @@
 
 var React = require('react'),
     Router = require('react-router'),
+
     constants = require('../constants'),
+    auth = require('../auth'),
     Simulator = require('../simulator');
 
+var Authentication = {
+  statics: {
+    willTransitionTo: function (transition) {
+      var nextPath = transition.path;
+      if (!auth.loggedIn()) {
+        transition.redirect('/login',{},
+          { 'nextPath' : nextPath });
+      }
+    }
+  }
+};
+
 var Game = React.createClass({
-  mixins: [ Router.State ],
+  mixins: [ Router.State, Authentication ],
   getInitialState: function() {
     return {
       level: this.getParams().level,
@@ -20,6 +34,7 @@ var Game = React.createClass({
     return (
       <div className="game">
         <h1>ElevatorOperator</h1>
+        <p>User: {JSON.stringify(auth.getUser())}</p>
         <p>Level: {this.state.level}</p>
         <p>State: {this.state.state}</p>
         <textarea

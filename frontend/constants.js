@@ -14,7 +14,8 @@ module.exports = {
     		events: [
     			{type: 'PERSON_ARRIVES', id: 0, fromFloor: 0, toFloor: 1},
     			{type: 'PERSON_ARRIVES', id: 1, fromFloor: 2, toFloor: 0},
-    			{type: 'PERSON_ARRIVES', id: 2, fromFloor: 1, toFloor: 0}
+    			{type: 'PERSON_ARRIVES', id: 2, fromFloor: 1, toFloor: 0},
+                {type: 'PERSON_ARRIVES', id: 3, fromFloor: 2, toFloor: 2}
     		]
     	}
     ]
