@@ -14,7 +14,6 @@ window.React = React; // export for http://fb.me/react-devtools
 
 var Route = Router.Route;
 
-
 var routes = (
   <Route handler={App}>
     <Route name="login" handler={Login}/>

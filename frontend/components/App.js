@@ -28,7 +28,7 @@ var App = React.createClass({
 
   render: function () {
     var loginOrOut = this.state.user ?
-      <Link to="logout">logout</Link> :
+      <span><Link to="logout">logout</Link> {JSON.stringify(this.state.user)}</span> :
       <Link to="login">login</Link>;
     return (
       <div>

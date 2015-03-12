@@ -1,58 +1,40 @@
 /*** @jsx React.DOM */
 
-var React = require('react');
-/*var socket = require('socket.io-client')('http://localhost:3333');
-
-socket.on('connect', function() {
-  console.log('connected!!!');
-});*/
-
-var SetIntervalMixin = {
-  componentWillMount: function() {
-    this.intervals = [];
-  },
-  setInterval: function() {
-    this.intervals.push(setInterval.apply(null, arguments));
-  },
-  componentWillUnmount: function() {
-    this.intervals.map(clearInterval);
-  }
-};
+var React = require('react'),
+    ActionCreator = require('../ActionCreator'),
+    Socket = require('../Socket'),
+    LeaderboardStore = require('../stores/LeaderboardStore');
 
 var Leaderboard = React.createClass({
-  mixins: [SetIntervalMixin],
-  loadLeaderboardFromServer: function() {
-    /*$.ajax({
-      url: 'leaderboard',
-      dataType: 'json',
-      success: function(data) {
-        this.setState({data: data});
-      }.bind(this),
-      error: function(xhr, status, err) {
-        console.error(this.props.url, status, err.toString());
-      }.bind(this)
-    });*/
-  },
   getInitialState: function() {
-    /*socket.on('leaderboard', function(data) {
-      console.log('got new data');
-      this.setState({data: data});
-    }.bind(this));*/
-
     return {
-      data: []
+      leaderboard: []
     };
   },
+  _socketCallback: function(leaderboard) {
+    console.log(leaderboard);
+    ActionCreator.receiveLeaderboard(leaderboard);
+  },
   componentDidMount: function() {
-
+    console.log('MOUNTED');
+    Socket.on('leaderboard', this._socketCallback);
+    LeaderboardStore.on('change', this._onChange);
+  },
+  componentWillUnmount: function() {
+    LeaderboardStore.removeListener('change', this._onChange);
+    Socket.removeListener('leaderboard', this._socketCallback);
+  },
+  _onChange: function() {
+    console.log('_onChange');
+    this.setState({leaderboard: LeaderboardStore.get()});
   },
   render: function() {
-    var rows = this.state.data.sort(function(l, r) {
+    var rows = this.state.leaderboard.sort(function(l, r) {
       return l.points < r.points ? 1 : -1;
     }).map(function(person) {
       return (
-        <tr>
-          <td>{person.name}</td>
+        <tr key={person.id}>
+          <td>{person.username}</td>
           <td>{person.points}</td>
         </tr>
       );

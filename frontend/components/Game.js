@@ -21,6 +21,8 @@ var Authentication = {
 
 var Game = React.createClass({
   mixins: [ Router.State, Authentication ],
+
+  //propTypes: {}, // TODO
   getInitialState: function() {
     return {
       level: this.getParams().level,

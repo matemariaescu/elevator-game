@@ -1,4 +1,8 @@
+var keyMirror = require('keymirror');
+
 module.exports = {
+    URL: 'http://localhost:3333',
+    
 	initCode: [
 		'{',
     	'stateUpdated: function(elevator, state) {',
@@ -18,5 +22,9 @@ module.exports = {
                 {type: 'PERSON_ARRIVES', id: 3, fromFloor: 2, toFloor: 2}
     		]
     	}
-    ]
+    ],
+
+    ActionTypes: keyMirror({
+        RECEIVE_LEADERBOARD: null
+    })
 }
