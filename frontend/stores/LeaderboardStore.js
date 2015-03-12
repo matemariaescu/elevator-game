@@ -1,45 +1,26 @@
 
-var assign = require('object-assign'),
-    constants = require('../constants'),
-    EventEmitter = require('events').EventEmitter,
-    Dispatcher = require('../Dispatcher');
+var constants = require('../constants'),
+    Fluxxor = require('fluxxor');
 
 
 var ActionTypes = constants.ActionTypes;
-var CHANGE_EVENT = 'change';
 
-var _leaderboard = {};
 
-var LeaderboardStore = assign({}, EventEmitter.prototype, {
+var LeaderboardStore = Fluxxor.createStore({
+  initialize: function() {
+    this.leaderboard = [];
 
-  emitChange: function() {
-    this.emit(CHANGE_EVENT);
+    this.bindActions(
+      ActionTypes.RECEIVE_LEADERBOARD, this.onReceiveLeaderboard
+    );
   },
-
-  addChangeListener: function(callback) {
-    this.on(CHANGE_EVENT, callback);
+  onReceiveLeaderboard: function(payload) {
+    this.leaderboard = payload;
+    this.emit('change');
   },
-
-  removeChangeListener: function(callback) {
-    this.removeListener(CHANGE_EVENT, callback);
-  },
-
-  get: function() {
-    return _leaderboard;
+  getState: function() {
+    return this.leaderboard;
   }
-
-});
-
-LeaderboardStore.dispatchToken = Dispatcher.register(function(action) {
-
-  switch(action.type) {
-    case ActionTypes.RECEIVE_LEADERBOARD:
-    console.log('received leaderboard');
-      _leaderboard = action.leaderboard;
-      LeaderboardStore.emitChange();
-      break;
-  }
-
 });
 
 module.exports = LeaderboardStore;

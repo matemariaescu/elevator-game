@@ -2,12 +2,17 @@
 
 var React = require('react'),
     Router = require('react-router'),
+    Fluxxor = require('fluxxor'),
 
     auth = require('../auth');
 
 var Link = Router.Link;
 
+
+
 var App = React.createClass({
+  mixins: [Fluxxor.FluxMixin(React)],
+
   getInitialState: function () {
     return {
       user: auth.getUser()

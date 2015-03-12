@@ -1,33 +1,29 @@
 /*** @jsx React.DOM */
 
 var React = require('react'),
-    ActionCreator = require('../ActionCreator'),
-    Socket = require('../Socket'),
-    LeaderboardStore = require('../stores/LeaderboardStore');
+    Fluxxor = require('fluxxor'),
+    Socket = require('../Socket');
 
 var Leaderboard = React.createClass({
-  getInitialState: function() {
+  mixins: [Fluxxor.FluxMixin(React), Fluxxor.StoreWatchMixin('LeaderboardStore')],
+  getStateFromFlux: function() {
     return {
-      leaderboard: []
+      leaderboard: this.getFlux().store('LeaderboardStore').getState()
     };
   },
+
   _socketCallback: function(leaderboard) {
     console.log(leaderboard);
-    ActionCreator.receiveLeaderboard(leaderboard);
+    this.getFlux().actions.receiveLeaderboard(leaderboard);
   },
   componentDidMount: function() {
     console.log('MOUNTED');
     Socket.on('leaderboard', this._socketCallback);
-    LeaderboardStore.on('change', this._onChange);
   },
   componentWillUnmount: function() {
-    LeaderboardStore.removeListener('change', this._onChange);
     Socket.removeListener('leaderboard', this._socketCallback);
   },
-  _onChange: function() {
-    console.log('_onChange');
-    this.setState({leaderboard: LeaderboardStore.get()});
-  },
+
   render: function() {
     var rows = this.state.leaderboard.sort(function(l, r) {
       return l.points < r.points ? 1 : -1;

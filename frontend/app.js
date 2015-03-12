@@ -1,7 +1,8 @@
 /*** @jsx React.DOM */
 
 var React = require('react'),
-    Router = require('react-router');
+    Router = require('react-router'),
+    Fluxxor = require('fluxxor');
 
 var App = require('./components/App'),
     Game = require('./components/Game'),
@@ -11,6 +12,12 @@ var App = require('./components/App'),
 
 
 window.React = React; // export for http://fb.me/react-devtools
+
+var flux = new Fluxxor.Flux(require('./stores/stores'), require('./actions/actions'));
+flux.on('dispatch', function(type, payload) {
+  console.log('[Dispatch]', type, payload);
+});
+
 
 var Route = Router.Route;
 
@@ -24,6 +31,6 @@ var routes = (
 );
 
 Router.run(routes, function (Handler) {
-  React.render(<Handler/>, document.getElementById('react'));
+  React.render(<Handler flux={flux} />, document.getElementById('react'));
 });
 
