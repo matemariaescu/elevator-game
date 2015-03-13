@@ -1,7 +1,5 @@
 
 module.exports = {
-    URL: 'http://localhost:3333',
-
 	initCode: [
 		'{',
     	'stateUpdated: function(elevator, state) {',
