@@ -2,12 +2,13 @@
 
 var React = require('react'),
     Router = require('react-router'),
-
-    auth = require('../auth');
+    Fluxxor = require('fluxxor');
 
 var Logout = React.createClass({
+  mixins: [Fluxxor.FluxMixin(React)],
+
   componentDidMount: function () {
-    auth.logout();
+    this.getFlux().actions.logout();
   },
 
   render: function () {

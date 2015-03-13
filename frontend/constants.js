@@ -24,6 +24,8 @@ module.exports = {
     ],
 
     ActionTypes: {
-        RECEIVE_LEADERBOARD: 'RECEIVE_LEADERBOARD'
+        RECEIVE_LEADERBOARD: 'RECEIVE_LEADERBOARD',
+        LOGIN: 'LOGIN',
+        LOGOUT: 'LOGOUT'
     }
 }

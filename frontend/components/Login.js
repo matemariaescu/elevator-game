@@ -2,33 +2,29 @@
 
 var React = require('react'),
     Router = require('react-router'),
-
-    auth = require('../auth');
+    Fluxxor = require('fluxxor');
 
 var Login = React.createClass({
-  mixins: [Router.Navigation, Router.State],
+  mixins: [Router.Navigation, Router.State, Fluxxor.FluxMixin(React), Fluxxor.StoreWatchMixin('AuthStore')],
 
-  getInitialState: function () {
+  getStateFromFlux: function() {
+    var auth = this.getFlux().store('AuthStore').getState();
+    if (!!auth.user) {
+      var nextPath = this.getQuery().nextPath;
+      if (nextPath) this.transitionTo(nextPath);
+      else this.replaceWith('/');
+    }
     return {
-      error: false
-    };
+      AuthStore: auth
+    }
   },
 
   handleSubmit: function (event) {
     event.preventDefault();
-    var nextPath = this.getQuery().nextPath;
     var username = this.refs.username.getDOMNode().value;
     var password = this.refs.password.getDOMNode().value;
-    auth.login(username, password, function (user) {
-      if (!user)
-        return this.setState({ error: true });
 
-      if (nextPath) {
-        this.transitionTo(nextPath);
-      } else {
-        this.replaceWith('/');
-      }
-    }.bind(this));
+    this.getFlux().actions.login(username, password);
   },
 
   render: function () {

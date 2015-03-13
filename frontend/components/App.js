@@ -2,38 +2,24 @@
 
 var React = require('react'),
     Router = require('react-router'),
-    Fluxxor = require('fluxxor'),
-
-    auth = require('../auth');
+    Fluxxor = require('fluxxor');
 
 var Link = Router.Link;
 
 
 
 var App = React.createClass({
-  mixins: [Fluxxor.FluxMixin(React)],
+  mixins: [Fluxxor.FluxMixin(React), Fluxxor.StoreWatchMixin('AuthStore')],
 
-  getInitialState: function () {
+  getStateFromFlux: function() {
     return {
-      user: auth.getUser()
-    };
+      AuthStore: this.getFlux().store('AuthStore').getState()
+    }
   },
-
-  setStateOnAuth: function (user) {
-    this.setState({
-      user: user
-    });
-  },
-
-  componentWillMount: function () {
-    auth.onChange = this.setStateOnAuth;
-    auth.login();
-  },
-
 
   render: function () {
-    var loginOrOut = this.state.user ?
-      <span><Link to="logout">logout</Link> {JSON.stringify(this.state.user)}</span> :
+    var loginOrOut = this.state.AuthStore.isLoggedIn ?
+      <span><Link to="logout">logout</Link> {JSON.stringify(this.state.AuthStore.user)}</span> :
       <Link to="login">login</Link>;
     return (
       <div>

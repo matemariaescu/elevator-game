@@ -2,16 +2,19 @@
 
 var React = require('react'),
     Router = require('react-router'),
+    Fluxxor = require('fluxxor'),
 
+    Flux = require('../Flux'),
     constants = require('../constants'),
-    auth = require('../auth'),
     Simulator = require('../simulator');
 
 var Authentication = {
   statics: {
     willTransitionTo: function (transition) {
+      console.log('transition');
       var nextPath = transition.path;
-      if (!auth.loggedIn()) {
+      var auth = Flux.store('AuthStore').getState();
+      if (!auth.isLoggedIn) {
         transition.redirect('/login',{},
           { 'nextPath' : nextPath });
       }
@@ -20,7 +23,7 @@ var Authentication = {
 };
 
 var Game = React.createClass({
-  mixins: [ Router.State, Authentication ],
+  mixins: [Router.State, Fluxxor.FluxMixin(React), Authentication],
 
   //propTypes: {}, // TODO
   getInitialState: function() {
@@ -36,7 +39,6 @@ var Game = React.createClass({
     return (
       <div className="game">
         <h1>ElevatorOperator</h1>
-        <p>User: {JSON.stringify(auth.getUser())}</p>
         <p>Level: {this.state.level}</p>
         <p>State: {this.state.state}</p>
         <textarea

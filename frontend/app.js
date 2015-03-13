@@ -1,22 +1,19 @@
 /*** @jsx React.DOM */
 
 var React = require('react'),
-    Router = require('react-router'),
-    Fluxxor = require('fluxxor');
+    Router = require('react-router');
 
 var App = require('./components/App'),
     Game = require('./components/Game'),
     Leaderboard = require('./components/Leaderboard'),
     Login = require('./components/Login'),
-    Logout = require('./components/Logout');
+    Logout = require('./components/Logout'),
+    Flux = require('./Flux');
 
 
 window.React = React; // export for http://fb.me/react-devtools
 
-var flux = new Fluxxor.Flux(require('./stores/stores'), require('./actions/actions'));
-flux.on('dispatch', function(type, payload) {
-  console.log('[Dispatch]', type, payload);
-});
+
 
 
 var Route = Router.Route;
@@ -31,6 +28,6 @@ var routes = (
 );
 
 Router.run(routes, function (Handler) {
-  React.render(<Handler flux={flux} />, document.getElementById('react'));
+  React.render(<Handler flux={Flux} />, document.getElementById('react'));
 });
 
