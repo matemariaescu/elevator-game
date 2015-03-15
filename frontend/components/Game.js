@@ -6,12 +6,11 @@ var React = require('react'),
 
     Flux = require('../Flux'),
     constants = require('../constants'),
-    Simulator = require('../simulator');
+    Simulator = require('../Simulator');
 
 var Authentication = {
   statics: {
     willTransitionTo: function (transition) {
-      console.log('transition');
       var nextPath = transition.path;
       var auth = Flux.store('AuthStore').getState();
       if (!auth.isLoggedIn) {
@@ -23,14 +22,14 @@ var Authentication = {
 };
 
 var Game = React.createClass({
-  mixins: [Router.State, Fluxxor.FluxMixin(React), Authentication],
+  mixins: [Router.State, Fluxxor.FluxMixin(React), Fluxxor.StoreWatchMixin('OutputStore'), Authentication],
 
   //propTypes: {}, // TODO
-  getInitialState: function() {
+  getStateFromFlux: function() {
     return {
       level: this.getParams().level,
       code: constants.initCode,
-      output: '',
+      output: this.getFlux().store('OutputStore').getOutput(),
       state: 'stopped',
       simulator: null
     };
@@ -67,14 +66,11 @@ var Game = React.createClass({
   _onRunClicked: function(event) {
     if (this.state.simulator != null) return;
 
-    this.setState({output: ''});
+    Flux.actions.resetOutput();
 
     var userCode = eval('(' + this.state.code + ')');
 
-    var simulator = new Simulator(userCode, this.state.level, function(message) {
-      var output = this.state.output;
-      this.setState({output: output + message + '\n'});
-    }.bind(this), function() {
+    var simulator = new Simulator(userCode, this.state.level, function() {
       this.setState({simulator: null});
     }.bind(this));
     simulator.run();

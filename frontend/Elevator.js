@@ -1,11 +1,12 @@
-var constants = require('./constants');
+var Flux = require('./Flux'),
+    constants = require('./constants');
 
 function Elevator(numFloors, output) {
 	this.currentFloor = 0;
 	this.numFloors = numFloors;
 	this.floorQueue = [];
 	this.people = [];
-	this.output = output;
+	this.output = Flux.actions.output;
 }
 
 Elevator.prototype.goToFloor = function(floor) {

@@ -100,7 +100,7 @@ module.exports = function(db) {
 		fail: function(data, message, error, accept) { 
 			if(error) accept(new Error(message));
 			console.log('failed connection to socket.io:', message);
-			accept(null, false);  
+    		accept(new Error('not authenticated')); 
 		}
 	}));
 
