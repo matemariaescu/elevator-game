@@ -25,13 +25,17 @@ var Game = React.createClass({
   mixins: [Router.State, Fluxxor.FluxMixin(React), Fluxxor.StoreWatchMixin('OutputStore'), Authentication],
 
   //propTypes: {}, // TODO
-  getStateFromFlux: function() {
+  getInitialState: function() {
     return {
       level: this.getParams().level,
       code: constants.initCode,
-      output: this.getFlux().store('OutputStore').getOutput(),
       state: 'stopped',
       simulator: null
+    };
+  },
+  getStateFromFlux: function() {
+    return {
+      output: this.getFlux().store('OutputStore').getOutput()
     };
   },
   render: function() {
@@ -64,14 +68,14 @@ var Game = React.createClass({
     this.setState({code: this.refs.codeInput.getDOMNode().value});
   },
   _onRunClicked: function(event) {
-    if (this.state.simulator != null) return;
+    if (this.state.simulator !== null) return;
 
     Flux.actions.resetOutput();
 
     var userCode = eval('(' + this.state.code + ')');
 
     var simulator = new Simulator(userCode, this.state.level, function() {
-      this.setState({simulator: null});
+      this.setState({simulator: null, state: 'done'});
     }.bind(this));
     simulator.run();
 
@@ -79,7 +83,7 @@ var Game = React.createClass({
 
   },
   _onStopClicked: function(event) {
-    if (this.state.simulator == null) return;
+    if (this.state.simulator === null) return;
     this.state.simulator.stop();
     this.setState({simulator: null, state: 'stopped'});
   }

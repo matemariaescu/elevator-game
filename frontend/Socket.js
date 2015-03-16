@@ -5,7 +5,6 @@ socket = socket(window.location.origin);
 
 socket.on('connect', function() {
 	console.log('connected!!!');
-	socket.emit('startLevel', {level: 0});
 });
 socket.on('error', function(err) {
 	console.log('cannot connect to socket: ', err);

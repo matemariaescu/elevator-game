@@ -9,13 +9,13 @@ function GameState(game_id, level) {
 
 	this.people = level.people;
 
+	this.time = 0;
+
 	this.elevators = [];
-	this.sockets = [];
 };
 
 GameState.prototype.addElevator = function(elevator) {
 	this.elevators.push(elevator);
-	this.sockets.push(elevator.socket);
 };
 
 GameState.prototype.nextStep = function() {
@@ -43,6 +43,8 @@ GameState.prototype.nextStep = function() {
 
 	var p = people.shift();
 	this.floors[p.fromFloor].push(p);
+
+	this.time++;
 }
 
 GameState.prototype.done = function() {
@@ -53,10 +55,19 @@ GameState.prototype.done = function() {
 	return true;
 };
 
+GameState.prototype.getData = function() {
+	return {
+		game_id: this.game_id,
+		floors: this.floors,
+		time: this.time,
+		elevators: this.elevators.map(function(e) {return e.getData();})
+	};
+};
+
 GameState.prototype.updateSockets = function() {
-	this.sockets.forEach(function(socket){
-		socket.emit('newState', this);
-	});
+	this.elevators.forEach(function(elevator) {
+		elevator.socket.emit('newState', this.getData());
+	}.bind(this));
 };
 
 GameState.prototype.publishResults = function() {
@@ -64,8 +75,8 @@ GameState.prototype.publishResults = function() {
 	this.elevators.forEach(function(elevator) {
 		res[elevator.socket.request.user._id] = elevator.peopleDelivered;
 	});
-	this.sockets.forEach(function(socket){
-		socket.emit('gameDone', res);
+	this.elevators.forEach(function(elevator){
+		elevator.socket.emit('gameDone', res);
 	});
 };
 

@@ -1,24 +1,19 @@
-var constants = require('./constants'),
-    Elevator = require('./Elevator'),
-    Flux = require('./Flux');
+var Elevator = require('./Elevator'),
+    Flux = require('./Flux'),
+    Socket = require('./Socket');
 
 function Simulator(codeObj, level, done) {
 	this.codeObj = codeObj;
-	this.levelObj = constants.levels[level];
+	this.level = level;
 	this.done = done;
 	this.isRunning = false;
-	this.setIntervalId = null;
+
+	this.onStateChangedListener = null;
 
 	this.output = Flux.actions.output;
+};
 
-	this.time = 0;
-
-	Flux.actions.startNewGame(this.levelObj.numFloors);
-
-	this.elevator = new Elevator(this.levelObj.numFloors);
-}
-
-Simulator.prototype.stateUpdated = function() {
+/*Simulator.prototype.stateUpdated = function() {
 	this.codeObj.stateUpdated(this.elevator, Flux.store('GameStateStore').getState());
 };
 
@@ -52,17 +47,25 @@ Simulator.prototype.nextStep = function() {
 		this.stop();
 		this.output('***Exception***: ' + e);
 	}
+};*/
+Simulator.prototype._onStateChanged = function(state) {
+	this.output(JSON.stringify(state));
+	//Flux.actions.output(JSON.stringify(state));
 };
 Simulator.prototype.run = function() {
 	if (this.isRunning) return;
 	this.isRunning = true;
-	//Flux.store('GameStateStore').on('change', this.stateUpdated.bind(this));
-	this.setIntervalId = setInterval(this.nextStep.bind(this), 1000);
+	Socket.emit('startLevel', {
+		level: this.level
+	});
+	this.onStateChangedListener = function(data) {
+		this._onStateChanged(data);
+	}.bind(this);
+	Socket.on('newState', this.onStateChangedListener);
 };
 Simulator.prototype.stop = function() {
 	if (!this.isRunning) return;
-	clearInterval(this.setIntervalId);
-	//Flux.store('GameStateStore').removeListener('change', this.stateUpdated.bind(this));
+	Socket.removeListener('newState', this.onStateChangedListener);
 	this.isRunning = false;
 	this.done();
 };

@@ -9,6 +9,16 @@ function ElevatorState(socket, maxCapacity) {
 	this.peopleDelivered = 0;
 };
 
+ElevatorState.prototype.getData = function() {
+	return {
+		maxCapacity: this.maxCapacity,
+		currentFloor: this.currentFloor,
+		floorQueue: this.floorQueue,
+		people: this.people,
+		peopleDelivered: this.peopleDelivered
+	};
+};
+
 ElevatorState.prototype.nextFloor = function() {
 	if (this.floorQueue.length != 0)
 		this.currentFloor = this.floorQueue.shift();
