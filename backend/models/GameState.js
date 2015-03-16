@@ -7,7 +7,7 @@ function GameState(game_id, level) {
 	this.floors = [];
 	for (var floor = 0; floor < level.numFloors; floor++) this.floors.push([]);
 
-	this.people = level.people;
+	this.people = JSON.parse(JSON.stringify(level.people)); // deep copy
 
 	this.time = 0;
 
@@ -19,8 +19,6 @@ GameState.prototype.addElevator = function(elevator) {
 };
 
 GameState.prototype.nextStep = function() {
-	if (this.people.length > 0) return;
-
 	this.elevators.forEach(function(elevator) {
 		elevator.nextFloor();
 	});
@@ -31,18 +29,22 @@ GameState.prototype.nextStep = function() {
 		});
 		if (elevators.length === 0) continue;
 
-		while (floors[floor].length !== 0) {
-			var p = floors[floor].shift();
-			var e = Math.random()*elevators.length;
-			elavators[e].peopleEnter([p]);
-			if (elavators[e].isFull())
+		while (this.floors[floor].length !== 0) {
+			var p = this.floors[floor].shift();
+			var e = Math.floor(Math.random()*elevators.length);
+			elevators[e].peopleEnter([p]);
+			if (elevators[e].isFull())
 				elevators.splice(e, 1); // remove from array
 			if (elevators.length === 0) break;
 		}
 	}
 
-	var p = people.shift();
-	this.floors[p.fromFloor].push(p);
+	if (this.people.length > 0) {
+		var ps = this.people.shift();
+		ps.forEach(function(p) {
+			this.floors[p.fromFloor].push(p);
+		}.bind(this));
+	}
 
 	this.time++;
 }
@@ -51,6 +53,9 @@ GameState.prototype.done = function() {
 	if (this.people.length > 0) return false;
 	for (var floor = 0; floor < this.floors.length; floor++) {
 		if (this.floors[floor].length > 0) return false;
+	}
+	for (var e = 0; e < this.elevators.length; e++) {
+		if (this.elevators[e].people.length > 0) return false;
 	}
 	return true;
 };
@@ -66,7 +71,10 @@ GameState.prototype.getData = function() {
 
 GameState.prototype.updateSockets = function() {
 	this.elevators.forEach(function(elevator) {
-		elevator.socket.emit('newState', this.getData());
+		elevator.socket.emit('newState', {
+			state: this.getData(),
+			elevator: elevator.getData()
+		});
 	}.bind(this));
 };
 

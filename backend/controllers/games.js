@@ -35,7 +35,7 @@ exports.nextStep = function() {
 		if (game.done()) {
 			console.log('game done');
 			game.publishResults();
-			games[game_id] = null; // delete game
+			delete games[game_id];
 			continue;
 		}
 		game.nextStep();
@@ -48,13 +48,17 @@ exports.goToFloor = function(socket, data) {
 	var game_id = data.game_id;
 	var floor = data.floor;
 
+	console.log('go to floor', floor);
+
 	var game = games[game_id];
 	if (floor >= game.floors.length) {
 		return sendError(socket, 'invalid floor number');
 	}
 
 	game.elevators.forEach(function(elevator) {
-		if (elevator.socket.request.user._id === user._id)
+		if (elevator.socket.request.user._id === user_id) {
 			elevator.goToFloor(floor);
+			return; // there should be only one anyway
+		}
 	});
 };

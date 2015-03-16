@@ -1,4 +1,8 @@
-.code-textarea, .output-textarea {
-	width: 300px;
-	height:300px;
+.code-textarea {
+	width: 400px;
+	height: 300px;
+}
+.output-textarea {
+	width: 100%;
+	height: 1000px;
 }

@@ -27,10 +27,11 @@ var Game = React.createClass({
   //propTypes: {}, // TODO
   getInitialState: function() {
     return {
-      level: this.getParams().level,
+      level: parseInt(this.getParams().level),
       code: constants.initCode,
       state: 'stopped',
-      simulator: null
+      simulator: null,
+      result: null
     };
   },
   getStateFromFlux: function() {
@@ -44,6 +45,7 @@ var Game = React.createClass({
         <h1>ElevatorOperator</h1>
         <p>Level: {this.state.level}</p>
         <p>State: {this.state.state}</p>
+        <p>Result: {this.state.result}</p>
         <textarea
           className="code-textarea"
           ref="codeInput"
@@ -74,8 +76,8 @@ var Game = React.createClass({
 
     var userCode = eval('(' + this.state.code + ')');
 
-    var simulator = new Simulator(userCode, this.state.level, function() {
-      this.setState({simulator: null, state: 'done'});
+    var simulator = new Simulator(userCode, this.state.level, function(data) {
+      this.setState({simulator: null, state: 'done', result: data});
     }.bind(this));
     simulator.run();
 
