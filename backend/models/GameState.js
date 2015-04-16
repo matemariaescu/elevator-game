@@ -12,10 +12,20 @@ function GameState(game_id, level) {
 	this.time = 0;
 
 	this.elevators = [];
+
+	this.printer =	Printer.emit ('newState', {gameState : this}).bind(this);
 };
 
 GameState.prototype.addElevator = function(elevator) {
 	this.elevators.push(elevator);
+};
+
+GameState.prototype.getElevators = function () {
+    return this.elevators;
+};
+
+GameState.prototype.getPeopleOnFloor = function (floor) {
+
 };
 
 GameState.prototype.nextStep = function() {

@@ -26,7 +26,7 @@ ElevatorState.prototype.nextFloor = function() {
 		this.currentFloor = this.floorQueue.shift();
 	this.people = this.people.filter(function(p) {
 		if (p.toFloor == this.currentFloor)
-			this.peopleDelivered++;
+			this.peopleDelivered++; 
 		return p.toFloor != this.currentFloor;
 	}.bind(this));
 };
@@ -53,4 +53,11 @@ ElevatorState.prototype.getFloor = function() {
 ElevatorState.prototype.isDoorOpen = function () {
   return this.openedDoors;
 };
+
+ElevatorState.prototype.isOnFloor = function (floor) {
+  if (floor == this.currentFloor)
+  	return true;
+  else return false;
+};
+
 module.exports = ElevatorState;
